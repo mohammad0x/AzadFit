@@ -4,9 +4,9 @@ import jdatetime
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, phone, verify_code, password=None):
+    def create_user(self, phone, **extra_fields):
         """
-        Creates and saves a User with the given email, date of
+        Creates and saves a User with the given phone, date of
         birth and password.
         """
         if not phone:
@@ -14,23 +14,24 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             phone=phone,
-            verify_code=verify_code,
+            **extra_fields
         )
 
-        user.set_password(password)
+        user.set_unusable_password()
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone, verify_code, password=None):
+    def create_superuser(self, phone, password, **extra_fields):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
         """
         user = self.create_user(
             phone,
-            password=password,
-            verify_code=verify_code,
+            **extra_fields,
+
         )
+        user.set_password(password)
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -45,7 +46,6 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = "phone"
-    REQUIRED_FIELDS = ["verify_code"]
 
     def __str__(self):
         return self.phone

@@ -1,5 +1,17 @@
 from django.urls import path
+from . import views
 
 urlpatterns = [
+    path('register/', views.register_view, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 
+    path('', views.gym_list, name='gym_list'),
+    path('gym/<slug:slug>/', views.gym_detail, name='gym_detail'),
+
+    path('timeslots/', views.timeslot_list, name='timeslot_list'),
+    path('reserve/<int:timeslot_id>/<int:gym_id>/', views.reserve_time, name='reserve_time'),
+    path('my-reservations/', views.user_reservations, name='user_reservations'),
+
+    path('pay/<int:reservation_id>/', views.make_payment, name='make_payment'),
 ]
