@@ -85,7 +85,7 @@ class Gym(models.Model):
 
 
 class Image(models.Model):
-    gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='images/')
     order = models.IntegerField(default=0)
 
@@ -122,7 +122,6 @@ class TimeSlot(models.Model):
         return jdatetime.date.fromgregorian(date=self.date)
 
     def get_day_display(self):
-        """نمایش نام روز بر اساس choices"""
         for day_num, day_name in self.DAYS_OF_WEEK:
             if day_num == self.day_of_week:
                 return day_name
@@ -146,7 +145,7 @@ class Reservation(models.Model):
 
 
 class Payment(models.Model):
-    gym = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     amount = models.IntegerField(verbose_name="مبلغ به ریال")
     description = models.TextField(verbose_name="توضیحات")
     ref_id = models.CharField(max_length=255, blank=True, verbose_name="کد پیگیری")
@@ -156,6 +155,11 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"{self.gym.name} - {self.amount}"
+
+    class Meta:
+        verbose_name = "پرداخت"
+        verbose_name_plural = "پرداخت‌ها"
+        ordering = ['-created']
 
     @property
     def created_jalali_full(self):
