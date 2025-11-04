@@ -5,6 +5,28 @@
     <title>Title</title>
 </head>
 <body>
+{% for reservations in reservations %}
+    <p>
+        {{ reservations.time_slot.day_of_week }} |
+        {{ reservations.time_slot.start_time }} |
+        {{ reservations.time_slot.end_time }}
+    </p>
+    <p>
+        {{ reservations.gym.name }} |
+        {{ reservations.gym.address }} |
+        {{ reservations.gym.price }}
 
+    </p>
+    <p>
+        {{ reservations.user.phone }}
+    </p>
+    <p>
+        {{ reservations.contract }}
+    </p>
+    <p>
+        {{ reservations.is_pey }}
+    </p>
+
+{% endfor %}
 </body>
 </html>

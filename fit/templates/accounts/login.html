@@ -5,6 +5,21 @@
     <title>Title</title>
 </head>
 <body>
+<form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+               <label for="phone">شماره تلفن همراه</label>
+               <div class="input-wrapper">
+                  <input type="tel" name="phone" id="phone" class="form-input" placeholder="0912 345 6789" pattern="09\d{9}" required>
+                  <i class="fas fa-phone input-icon"></i>
+               </div>
+            </div>
+
+            <input type="submit" value="دریافت کد" class="submit-btn">
+               دریافت کد تأیید
+               <i class="fas fa-paper-plane"></i>
+            </button>
+</form>
 
 </body>
 </html>

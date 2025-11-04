@@ -5,6 +5,22 @@
     <title>Title</title>
 </head>
 <body>
-
+{% for gyms in gyms %}
+    <p>
+        {{ gyms.name }}
+    </p>
+    <p>
+        {{ gyms.slug }}
+    </p>
+    <p>
+        {{ gyms.description }}
+    </p>
+    <p>
+        {{ gyms.price }}
+    </p>
+    <p>
+        {{ gyms.contract }}
+    </p>
+{% endfor %}
 </body>
 </html>

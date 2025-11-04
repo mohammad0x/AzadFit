@@ -16,7 +16,7 @@ def login_phone(request):
         global phone, random_code
         phone = request.POST.get('phone')
         if MyUser.objects.filter(phone=phone).exists():
-            return redirect('app:loginPhoneDoctor')
+            return redirect('app:register')
         random_code = random.randint(10000, 99999)
         print(random_code)
         # sms = KavenegarAPI(

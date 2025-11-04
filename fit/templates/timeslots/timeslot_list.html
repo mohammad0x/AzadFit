@@ -5,6 +5,22 @@
     <title>Title</title>
 </head>
 <body>
-
+{% for timeslots in timeslots %}
+    <p>
+        {{ timeslots.day_of_week }}
+    </p>
+    <p>
+        {{ timeslots.start_time }}
+    </p>
+    <p>
+        {{ timeslots.end_time }}
+    </p>
+    <p>
+        {{ timeslots.is_available }}
+    </p>
+    <p>
+        {{ timeslots.date }}
+    </p>
+{% endfor %}
 </body>
 </html>
