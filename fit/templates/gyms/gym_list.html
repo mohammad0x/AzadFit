@@ -10,16 +10,7 @@
         {{ gyms.name }}
     </p>
     <p>
-        {{ gyms.slug }}
-    </p>
-    <p>
-        {{ gyms.description }}
-    </p>
-    <p>
-        {{ gyms.price }}
-    </p>
-    <p>
-        {{ gyms.contract }}
+        <a href="{% url 'fit:gym_detail' gyms.slug %}">RESERVE</a>
     </p>
 {% endfor %}
 </body>

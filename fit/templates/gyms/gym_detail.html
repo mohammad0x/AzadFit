@@ -6,5 +6,31 @@
 </head>
 <body>
 
+<p>
+    {{ gym.name }}
+</p>
+<p>
+    {{ gym.slug }}
+</p>
+<p>
+    {{ gym.address }}
+</p>
+<p>
+    {{ gym.description }}
+</p>
+<p>
+    {{ gym.price }}
+</p>
+<p>
+    {{ gym.created_jalali }}
+</p>
+<p>
+    {{ gym.contract }}
+</p>
+{% for images in images %}
+<p>
+    <img src="{{ images.image.url }}" alt="" width="250px" height="300px">
+</p>
+{% endfor %}
 </body>
 </html>
