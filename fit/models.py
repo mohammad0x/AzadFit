@@ -92,6 +92,9 @@ class Image(models.Model):
     class Meta:
         ordering = ['order']
 
+    def __str__(self):
+        return self.gym.name
+
 
 class TimeSlot(models.Model):
     DAYS_OF_WEEK = [
@@ -103,7 +106,7 @@ class TimeSlot(models.Model):
         (5, 'پنجشنبه'),
         (6, 'جمعه'),
     ]
-
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='timeslots')
     day_of_week = models.IntegerField(choices=DAYS_OF_WEEK, verbose_name="روز های هفته")
     start_time = models.TimeField(verbose_name="ساعت شروع")
     end_time = models.TimeField(verbose_name="ساعت پایان")

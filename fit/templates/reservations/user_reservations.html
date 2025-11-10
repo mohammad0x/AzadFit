@@ -6,10 +6,11 @@
 </head>
 <body>
 {% for reservations in reservations %}
+    ##############################################
     <p>
-        {{ reservations.time_slot.day_of_week }} |
-        {{ reservations.time_slot.start_time }} |
-        {{ reservations.time_slot.end_time }}
+        {{ reservations.time_slot.get_day_of_week_display }} |
+     start   {{ reservations.time_slot.start_time }} |
+     end   {{ reservations.time_slot.end_time }}
     </p>
     <p>
         {{ reservations.gym.name }} |
@@ -21,10 +22,13 @@
         {{ reservations.user.phone }}
     </p>
     <p>
-        {{ reservations.contract }}
+        <input type="checkbox" name="contract" value="True">
     </p>
     <p>
-        {{ reservations.is_pey }}
+        {% if reservations.is_pey ==  False %}
+            پرداخت نشده
+        {% endif %}
+
     </p>
 
 {% endfor %}

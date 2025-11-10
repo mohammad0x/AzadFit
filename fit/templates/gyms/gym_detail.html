@@ -32,5 +32,36 @@
     <img src="{{ images.image.url }}" alt="" width="250px" height="300px">
 </p>
 {% endfor %}
+{% for timeslot in timeslots %}
+    ############################################
+
+    <p>
+        {{ timeslot.gym.name }}
+    </p>
+    <p>
+    {{ timeslot.get_day_of_week_display }}
+    </p>
+    <p>
+    start
+    {{ timeslot.start_time }}
+    </p>
+    <p>
+    end
+    {{ timeslot.end_time }}
+    </p>
+    <p>
+
+    {% if timeslot.is_available == True %}
+        رزرو نشده
+    {% endif %}
+    </p>
+    <p>
+
+    {{ timeslot.date }}
+    </p>
+<p>
+    <a href="{% url 'fit:reserve_time' timeslot.id gym.id %}">همین الان رزرو کن</a>
+</p>
+{% endfor %}
 </body>
 </html>

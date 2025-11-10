@@ -7,6 +7,10 @@ from .models import *
 import jdatetime
 from .forms import *
 import random
+import requests
+import json
+from kavenegar import *
+from .zarinpal import *
 
 
 def home(request):
@@ -85,13 +89,15 @@ def gym_list(request):
 def gym_detail(request, slug):
     gym = get_object_or_404(Gym, slug=slug)
     images = gym.images.all()
-    return render(request, 'gyms/gym_detail.html', {'gym': gym, 'images': images})
-
-
-@login_required
-def timeslot_list(request):
     timeslots = TimeSlot.objects.filter(is_available=True)
-    return render(request, 'timeslots/timeslot_list.html', {'timeslots': timeslots})
+
+    return render(request, 'gyms/gym_detail.html', {'gym': gym, 'images': images,'timeslots': timeslots})
+
+
+# @login_required
+# def timeslot_list(request):
+#     timeslots = TimeSlot.objects.filter(is_available=True)
+#     return render(request, 'timeslots/timeslot_list.html', {'timeslots': timeslots})
 
 
 @login_required
@@ -101,7 +107,7 @@ def reserve_time(request, timeslot_id, gym_id):
 
     if not timeslot.is_available:
         messages.error(request, "این بازه زمانی دیگر در دسترس نیست.")
-        return redirect('timeslot_list')
+        return redirect('fit:gym_list')
 
     Reservation.objects.create(
         time_slot=timeslot,
@@ -109,38 +115,101 @@ def reserve_time(request, timeslot_id, gym_id):
         user=request.user,
     )
 
-    timeslot.is_available = False
-    timeslot.save()
+    # timeslot.is_available = False
+    # timeslot.save()
 
     messages.success(request, "رزرو با موفقیت انجام شد.")
-    return redirect('user_reservations')
+    return redirect('fit:user_reservations')
 
 
 @login_required
 def user_reservations(request):
+    global pricee
+    pricee = 0
     reservations = Reservation.objects.filter(user=request.user)
+    if Reservation.objects.filter(user=request.user.id, is_pey=False,contract=True).exists():
+        for reservation in reservations:
+            pricee += int(reservation.gym.price)
     return render(request, 'reservations/user_reservations.html', {'reservations': reservations})
 
 
 @login_required
-def make_payment(request, reservation_id):
-    reservation = get_object_or_404(Reservation, id=reservation_id)
-
+def request_payment(request):
     if request.method == 'POST':
-        amount = request.POST.get('amount')
-        description = request.POST.get('description')
+        global amount
+        amount = request.POST['amount']
+        description = request.POST['description']
 
-        payment = Payment.objects.create(
-            reservation=reservation,
-            amount=amount,
-            description=description,
-            status=True,
-            ref_id="TEST-REF-1234"
-        )
-        reservation.is_pey = True
-        reservation.save()
+        if str(pricee) == str(amount):
+            data = {
+                "merchant_id": settings.MERCHANT,
+                "amount": amount,
+                "description": description,
+                "callback_url": CallbackURL,
+            }
+            data = json.dumps(data)
 
-        messages.success(request, "پرداخت با موفقیت ثبت شد.")
-        return redirect('user_reservations')
+            headers = {'content-type': 'application/json', 'content-length': str(len(data))}
 
-    return render(request, 'payments/make_payment.html', {'reservation': reservation})
+            response = requests.post(ZP_API_REQUEST, data=data, headers=headers)
+
+            if response.status_code == 200:
+                response = response.json()
+
+                if response["data"]['code'] == 100:
+                    url = f"{ZP_API_STARTPAY}{response['data']['authority']}"
+                    return redirect(url)
+
+                else:
+                    messages.error(request, f'{str(response["errors"])}', 'danger')
+                    return redirect('fit:user_reservations')
+
+            else:
+                messages.error(request, 'مشکلی پیش آمد.', 'danger')
+                return redirect('fit:user_reservations')
+        else:
+            return redirect('fit:user_reservations')
+    return redirect('fit:user_reservations')
+
+
+@login_required
+def verify(request):
+    status = request.GET.get('Status')
+    authority = request.GET['Authority']
+
+    if status == "OK":
+        data = {
+            "merchant_id": settings.MERCHANT,
+            "amount": amount,
+            "authority": authority
+        }
+        data = json.dumps(data)
+
+        headers = {'content-type': 'application/json', 'Accept': 'application/json'}
+
+        response = requests.post(ZP_API_VERIFY, data=data, headers=headers)
+
+        if response.status_code == 200:
+            response = response.json()
+            if response['data']['code'] == 100:
+                # put your logic here
+                Reservation.objects.filter(user=request.user.id).update(is_pey=True)
+                messages.success(request, 'خرید شما با موفقیت انجام شد.', 'success')
+                return redirect('app:detailUserResreve')
+
+            elif response['data']['code'] == 101:
+                messages.error(request, 'این پرداخت قبلا انجام شده است.', 'danger')
+                return redirect('fit:user_reservations')
+
+            else:
+                messages.error(request, 'پرداخت شما ناموفق بود.', 'danger')
+                return redirect('fit:user_reservations')
+
+        else:
+            messages.error(request, 'پرداخت شما ناموفق بود.', 'danger')
+            return redirect('fit:user_reservations')
+
+
+    else:
+        messages.error(request, 'پرداخت شما ناموفق بود.', 'danger')
+        return redirect('fit:user_reservations')

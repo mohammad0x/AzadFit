@@ -125,3 +125,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "fit.MyUser"
+
+
+# SANDBOX MODE
+
+MERCHANT  =  "6f94621d-0575-4874-9953-eb45f151146b"
+SANDBOX  =  True
