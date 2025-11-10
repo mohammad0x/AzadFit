@@ -9,9 +9,13 @@ from .forms import *
 import random
 
 
+def home(request):
+    return render(request, 'home.html')
+
+
 def login_phone(request):
     if request.user.is_authenticated:
-        return redirect('app:home')
+        return redirect('fit:home')
     if request.method == 'POST':
         global phone, random_code
         phone = request.POST.get('phone')
@@ -27,14 +31,14 @@ def login_phone(request):
         #     'message': f' {random_code} سلام این اولین تست است ',
         # }
         # response = sms.sms_send(params)
-        return redirect('app:verify_login_phone')
+        return redirect('fit:register')
 
     return render(request, 'accounts/login.html')
 
 
 def verify_login_phone(request):
     if request.user.is_authenticated:
-        return redirect('app:home')
+        return redirect('fit:home')
     if request.method == 'POST':
         form = CodePhoneForm(request.POST)
         if form.is_valid():
@@ -43,8 +47,7 @@ def verify_login_phone(request):
                     user = authenticate(request, phone=phone)
                     if user is not None:
                         login(request, user)
-                        return redirect('app:postView')
-
+                        return redirect('fit:home')
 
                 # sign up
                 user = MyUser.objects.create_user(phone=phone)
@@ -52,17 +55,15 @@ def verify_login_phone(request):
 
                 # sign in
                 user = authenticate(request, phone=phone)
-                print(user)
                 if user is not None:
                     login(request, user)
-                    return redirect('app:postView')
-
+                    return redirect('fit:home')
 
                 global verify
                 verify = True
-                return redirect('app:postView')
+                return redirect('fit:home')
             else:
-                messages.error(request, 'کد وارد شده اشتباه است' , 'danger')
+                messages.error(request, 'کد وارد شده اشتباه است', 'danger')
     else:
         form = CodePhoneForm()
     context = {
@@ -73,7 +74,7 @@ def verify_login_phone(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('fit:login')
 
 
 def gym_list(request):

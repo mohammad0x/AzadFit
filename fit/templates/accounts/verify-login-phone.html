@@ -5,21 +5,41 @@
     <title>Title</title>
 </head>
 <body>
-         <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-               <label for="phone">شماره تلفن همراه</label>
-               <div class="input-wrapper">
-                  <input type="tel" name="phone" id="phone" class="form-input" placeholder="0912 345 6789" pattern="09\d{9}" required>
-                  <i class="fas fa-phone input-icon"></i>
-               </div>
+ <div class="verify-container">
+        <div class="verify-bg"></div>
+
+        <div class="verify-card animate__animated animate__fadeInUp">
+            <div class="verify-header">
+                <h2><i class="fas fa-shield-alt"></i> تأیید هویت</h2>
+                <p>کد ۶ رقمی ارسال شده به شماره  را وارد کنید</p>
             </div>
 
-            <input type="submit" value="دریافت کد" class="submit-btn">
-               دریافت کد تأیید
-               <i class="fas fa-paper-plane"></i>
-            </button>
-         </form>
+            <form method="post">
+                {% csrf_token %}
+{#                <div class="code-inputs">#}
+{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
+{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
+{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
+{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
+{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
+{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
+{#                </div>#}
+                <div>
+
+                </div>
+                <input type="text" name="verify_code" id="full_code">
+
+                <input type="submit" class="verify-btn">
+                    تأیید نهایی
+                    <i class="fas fa-check-circle"></i>
+{#                </input>#}
+            </form>
+
+            <div class="countdown" id="countdown">
+                ارسال مجدد کد پس از ۱:۵۹
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
