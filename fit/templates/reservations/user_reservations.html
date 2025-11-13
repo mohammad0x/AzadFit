@@ -21,9 +21,7 @@
     <p>
         {{ reservations.user.phone }}
     </p>
-    <p>
-        <input type="checkbox" name="contract" value="True">
-    </p>
+
     <p>
         {% if reservations.is_pey ==  False %}
             پرداخت نشده
@@ -32,5 +30,28 @@
     </p>
 
 {% endfor %}
+ <p>
+ **********************************************************
+    {% if price and price != 0 %}
+        <form action="{% url 'fit:request' %}" method="post">
+        {% csrf_token %}
+            <p>
+        توافق نامه را قبول دارم<input type="checkbox" name="contract" value="True" required>
+      </p>
+            <p>
+                <label> مبلغ قابل پرداخت:</label>
+                <input type="text" class="custom-form-control" name="amount" value="{{ price }}" readonly>
+            </p>
+        <p>
+            <label>توضیحات:</label>
+            <input type="text" class="custom-form-control" name="description" value="رزرو تایم">
+        </p>
+        <p>
+            <input type="submit" value="پرداخت">
+        </p>
+        </form>
+    {% endif %}
+    </p>
+
 </body>
 </html>

@@ -74,7 +74,8 @@ class Gym(models.Model):
     description = models.TextField(verbose_name="توضیحات")
     price = models.CharField(max_length=150, verbose_name="قیمت")
     created_jalali = models.DateTimeField(auto_now_add=True, verbose_name="زمان ساخت پست")
-    contract = models.TextField(blank=False, null=False, verbose_name="متن قرار داد")
+    contract_text = models.TextField(blank=False, null=False, verbose_name="متن قرار داد")
+
 
     def __str__(self):
         return self.name
@@ -138,9 +139,10 @@ class Reservation(models.Model):
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    contract = models.BooleanField(default=False, verbose_name="وضعیت قرار داد")
     is_pey = models.BooleanField(default=False, verbose_name="پرداخت")
     created_jalali = models.DateTimeField(auto_now_add=True)
+    contract = models.BooleanField(default=False, verbose_name="وضعیت قرار داد")
+
 
     @property
     def created_jalali_full(self):

@@ -91,7 +91,13 @@ def gym_detail(request, slug):
     images = gym.images.all()
     timeslots = TimeSlot.objects.filter(is_available=True)
 
-    return render(request, 'gyms/gym_detail.html', {'gym': gym, 'images': images,'timeslots': timeslots})
+    context = {
+        'gym': gym,
+        'images': images,
+        'timeslots': timeslots,
+    }
+
+    return render(request, 'gyms/gym_detail.html', context)
 
 
 # @login_required
@@ -107,6 +113,10 @@ def reserve_time(request, timeslot_id, gym_id):
 
     if not timeslot.is_available:
         messages.error(request, "این بازه زمانی دیگر در دسترس نیست.")
+        return redirect('fit:gym_list')
+
+    if Reservation.objects.filter(user=request.user, time_slot=timeslot).exists():
+        messages.error(request, "قبلا رزرو شده")
         return redirect('fit:gym_list')
 
     Reservation.objects.create(
@@ -126,12 +136,16 @@ def reserve_time(request, timeslot_id, gym_id):
 def user_reservations(request):
     global pricee
     pricee = 0
-    reservations = Reservation.objects.filter(user=request.user)
-    if Reservation.objects.filter(user=request.user.id, is_pey=False,contract=True).exists():
+    reservations = Reservation.objects.filter(user=request.user,is_pey=False)
+    if Reservation.objects.filter(user=request.user.id, is_pey=False, contract=False).exists():
         for reservation in reservations:
             pricee += int(reservation.gym.price)
-    return render(request, 'reservations/user_reservations.html', {'reservations': reservations})
+    return render(request, 'reservations/user_reservations.html', {'reservations': reservations , 'price':pricee})
 
+
+def history(request):
+    reservations = Reservation.objects.filter(user=request.user, is_pey=True)
+    return render(request , 'history/history.html' , {'reservations':reservations})
 
 @login_required
 def request_payment(request):
@@ -193,13 +207,13 @@ def verify(request):
             response = response.json()
             if response['data']['code'] == 100:
                 # put your logic here
-                Reservation.objects.filter(user=request.user.id).update(is_pey=True)
+                Reservation.objects.filter(user=request.user.id).update(is_pey=True,contract=True)
                 messages.success(request, 'خرید شما با موفقیت انجام شد.', 'success')
-                return redirect('app:detailUserResreve')
+                return redirect('fit:history')
 
             elif response['data']['code'] == 101:
                 messages.error(request, 'این پرداخت قبلا انجام شده است.', 'danger')
-                return redirect('fit:user_reservations')
+                return redirect('fit:history')
 
             else:
                 messages.error(request, 'پرداخت شما ناموفق بود.', 'danger')
