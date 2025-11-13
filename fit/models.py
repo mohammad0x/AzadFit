@@ -143,7 +143,8 @@ class Reservation(models.Model):
     created_jalali = models.DateTimeField(auto_now_add=True)
     contract = models.BooleanField(default=False, verbose_name="وضعیت قرار داد")
 
-
+    def __str__(self):
+        return f'{self.user.phone} {self.gym.name}'
     @property
     def created_jalali_full(self):
         return self.created_jalali.strftime('%Y/%m/%d - %H:%M')
@@ -152,14 +153,12 @@ class Reservation(models.Model):
 class Payment(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     amount = models.IntegerField(verbose_name="مبلغ به ریال")
-    description = models.TextField(verbose_name="توضیحات")
-    ref_id = models.CharField(max_length=255, blank=True, verbose_name="کد پیگیری")
     status = models.BooleanField(default=False, verbose_name="وضعیت پرداخت")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.gym.name} - {self.amount}"
+        return f"{self.reservation.gym.name} - {self.amount}"
 
     class Meta:
         verbose_name = "پرداخت"

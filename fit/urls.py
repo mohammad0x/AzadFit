@@ -17,6 +17,7 @@ urlpatterns = [
     path('reserve/<int:timeslot_id>/<int:gym_id>/', views.reserve_time, name='reserve_time'),
     path('my-reservations/', views.user_reservations, name='user_reservations'),
     path('history/', views.history, name='history'),
+    path('reservDelete/<int:id>', views.reservDelete, name='reservDelete'),
 
     path('send_request/', views.request_payment, name='request'),
     path('verify/', views.verify, name='verify'),

@@ -142,10 +142,15 @@ def user_reservations(request):
             pricee += int(reservation.gym.price)
     return render(request, 'reservations/user_reservations.html', {'reservations': reservations , 'price':pricee})
 
-
+@login_required
 def history(request):
     reservations = Reservation.objects.filter(user=request.user, is_pey=True)
     return render(request , 'history/history.html' , {'reservations':reservations})
+
+
+def reservDelete(request , id):
+    Reservation.objects.filter(user = request.user , id = id).delete()
+    return redirect('fit:user_reservations')
 
 @login_required
 def request_payment(request):
@@ -202,12 +207,17 @@ def verify(request):
         headers = {'content-type': 'application/json', 'Accept': 'application/json'}
 
         response = requests.post(ZP_API_VERIFY, data=data, headers=headers)
-
         if response.status_code == 200:
             response = response.json()
             if response['data']['code'] == 100:
                 # put your logic here
-                Reservation.objects.filter(user=request.user.id).update(is_pey=True,contract=True)
+                reserv = Reservation.objects.filter(user=request.user.id)
+                for res in reserv:
+                    if not res.is_pey:
+                        Payment.objects.create(reservation_id =res.id,amount=amount,status=True)
+                        TimeSlot.objects.filter(id=res.time_slot.id).update(is_available=False)
+                Reservation.objects.filter(user=request.user.id).update(is_pey=True, contract=True)
+
                 messages.success(request, 'خرید شما با موفقیت انجام شد.', 'success')
                 return redirect('fit:history')
 

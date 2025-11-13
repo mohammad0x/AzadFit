@@ -28,6 +28,9 @@
         {% endif %}
 
     </p>
+    <p>
+        <a href="{% url 'fit:reservDelete' reservations.id %}">Delete</a>
+    </p>
 
 {% endfor %}
  <p>
