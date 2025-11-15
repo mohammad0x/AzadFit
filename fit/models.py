@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 import jdatetime
+from django_jalali.db import models as jmodels
 
 
 class MyUserManager(BaseUserManager):
@@ -66,6 +67,10 @@ class MyUser(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    class Meta:
+        verbose_name = "کاریر"
+        verbose_name_plural = "کاربران"
+
 
 class Gym(models.Model):
     name = models.CharField(max_length=150, blank=False, null=False, verbose_name="نام")
@@ -73,9 +78,8 @@ class Gym(models.Model):
     address = models.CharField(max_length=150, verbose_name="آدرس")
     description = models.TextField(verbose_name="توضیحات")
     price = models.CharField(max_length=150, verbose_name="قیمت")
-    created_jalali = models.DateTimeField(auto_now_add=True, verbose_name="زمان ساخت پست")
+    created_jalali = jmodels.jDateTimeField(auto_now_add=True, verbose_name="زمان ساخت پست")
     contract_text = models.TextField(blank=False, null=False, verbose_name="متن قرار داد")
-
 
     def __str__(self):
         return self.name
@@ -83,6 +87,10 @@ class Gym(models.Model):
     @property
     def created_jalali_full(self):
         return self.created_jalali.strftime('%Y/%m/%d - %H:%M')
+
+    class Meta:
+        verbose_name = "ساختمان"
+        verbose_name_plural = "ساختمان ها"
 
 
 class Image(models.Model):
@@ -92,6 +100,8 @@ class Image(models.Model):
 
     class Meta:
         ordering = ['order']
+        verbose_name = "عکس"
+        verbose_name_plural = "عکس ها"
 
     def __str__(self):
         return self.gym.name
@@ -112,10 +122,12 @@ class TimeSlot(models.Model):
     start_time = models.TimeField(verbose_name="ساعت شروع")
     end_time = models.TimeField(verbose_name="ساعت پایان")
     is_available = models.BooleanField(default=True, verbose_name="وضعیت")
-    date = models.DateField(verbose_name="تاریخ شمسی")
+    date = jmodels.jDateField(verbose_name="تاریخ شمسی")
 
     class Meta:
         ordering = ['date', 'start_time']
+        verbose_name = "تایم های رزرو"
+        verbose_name_plural = "تایم رزرو"
 
     def save(self, *args, **kwargs):
         if not self.date:
@@ -140,21 +152,26 @@ class Reservation(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     is_pey = models.BooleanField(default=False, verbose_name="پرداخت")
-    created_jalali = models.DateTimeField(auto_now_add=True)
+    created_jalali = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ و زمان ساخت")
     contract = models.BooleanField(default=False, verbose_name="وضعیت قرار داد")
 
     def __str__(self):
         return f'{self.user.phone} {self.gym.name}'
+
     @property
     def created_jalali_full(self):
         return self.created_jalali.strftime('%Y/%m/%d - %H:%M')
+
+    class Meta:
+        verbose_name = "رزرو"
+        verbose_name_plural = "رزروها"
 
 
 class Payment(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     amount = models.IntegerField(verbose_name="مبلغ به ریال")
     status = models.BooleanField(default=False, verbose_name="وضعیت پرداخت")
-    created = models.DateTimeField(auto_now_add=True)
+    created = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ و زمان ساخت")
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
