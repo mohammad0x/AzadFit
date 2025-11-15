@@ -1,70 +1,414 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ gym.name }} | سیستم رزرواسیون</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- Global Reset & Body --- */
+        :root {
+            --primary-color: #3182ce;
+            --primary-hover: #2b6cb0;
+            --light-gray: #f0f4f8;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--light-gray);
+            direction: rtl;
+            color: #333;
+            line-height: 1.7; /* Increased for readability */
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        
+        main {
+            flex-grow: 1;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        /* ============================ */
+        /* HEADER & FOOTER (Copied) */
+        /* ============================ */
+        .main-header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            width: 100%;
+        }
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0; padding-bottom: 0;
+        }
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .main-nav ul { list-style: none; display: flex; gap: 2rem; }
+        .main-nav a { text-decoration: none; color: #4a5568; font-weight: 600; font-size: 0.95rem; transition: color 0.3s ease; }
+        .main-nav a:hover, .main-nav a.active { color: var(--primary-color); }
+        
+        .main-footer {
+            background-color: var(--text-dark);
+            color: #e2e8f0;
+            padding: 2rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+        .main-footer .container { padding-top: 0; padding-bottom: 0; }
+        
+        /* ============================ */
+        /* DETAIL PAGE LAYOUT (2-Column) */
+        /* ============================ */
+        .detail-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* 2/3 for content, 1/3 for sidebar */
+            gap: 2rem;
+        }
+
+        /* --- Column 1: Main Content --- */
+        .gym-main-content {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+            overflow: hidden; /* To round corners of gallery */
+        }
+        
+        /* --- Gallery --- */
+        .gallery-main-image {
+            width: 100%;
+            height: 400px; /* Main image height */
+            object-fit: cover;
+            display: block;
+        }
+        
+        .gallery-thumbnails {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background-color: #f7fafc;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .thumbnail-img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .thumbnail-img:hover {
+            opacity: 1;
+        }
+        
+        .thumbnail-img.active {
+            opacity: 1;
+            border-color: var(--primary-color);
+        }
+        
+        /* --- Gym Info --- */
+        .gym-info {
+            padding: 2rem;
+        }
+        
+        .gym-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .gym-description {
+            font-size: 1rem;
+            color: #4a5568;
+        }
+
+        /* --- Column 2: Sidebar --- */
+        .gym-sidebar {
+            /* This makes the sidebar sticky on desktop */
+            position: sticky;
+            top: 2rem;
+            align-self: start; /* Aligns to top of grid cell */
+        }
+
+        .sidebar-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .sidebar-content {
+            padding: 1.5rem;
+        }
+        
+        /* --- Info Card (Address, Price) --- */
+        .info-list {
+            list-style: none;
+        }
+        
+        .info-list li {
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .info-list li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-list i {
+            width: 20px;
+            margin-left: 0.75rem; /* Space between icon and text */
+            color: var(--text-light);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        /* --- Booking Card (Timeslots) --- */
+        .timeslot-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .timeslot-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeslot-date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .timeslot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+            direction: ltr; /* Time chips are LTR */
+        }
+        
+        .time-chip {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Vazirmatn', sans-serif;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        /* AVAILABLE Time Slot */
+        .time-chip.available {
+            background-color: #ebf8ff;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .time-chip.available:hover {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3);
+        }
+        
+        /* BOOKED Time Slot */
+        .time-chip.booked {
+            background-color: #f7fafc;
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            text-decoration: line-through;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 900px) {
+            .detail-layout {
+                grid-template-columns: 1fr; /* Stack columns */
+            }
+            .gym-sidebar {
+                position: static; /* Remove sticky on mobile */
+                top: auto;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .container { padding: 1.5rem 1rem; }
+            .gym-info { padding: 1.5rem; }
+            .gym-title { font-size: 1.75rem; }
+            .gallery-main-image { height: 250px; }
+            .sidebar-content { padding: 1rem; }
+            .timeslot-grid { grid-template-columns: 1fr 1fr; } /* 2 chips per row */
+        }
+
+    </style>
 </head>
 <body>
 
-<p>
-    {{ gym.name }}
-</p>
-<p>
-    {{ gym.slug }}
-</p>
-<p>
-    {{ gym.address }}
-</p>
-<p>
-    {{ gym.description }}
-</p>
-<p>
-    {{ gym.price }}
-</p>
-<p>
-    {{ gym.created_jalali }}
-</p>
-<p>
-    {{ gym.contract }}
-</p>
-{% for images in images %}
-<p>
-    <img src="{{ images.image.url }}" alt="" width="250px" height="300px">
-</p>
-{% endfor %}
-{% for timeslot in timeslots %}
-    ############################################
+{% include 'header/header.html' %}
 
-    <p>
-        {{ timeslot.gym.name }}
-    </p>
-    <p>
-    {{ timeslot.get_day_of_week_display }}
-    </p>
-    <p>
-    start
-    {{ timeslot.start_time }}
-    </p>
-    <p>
-    end
-    {{ timeslot.end_time }}
-    </p>
-    <p>
+    <main>
+        <div class="container">
+            <div class="detail-layout">
 
-    {% if timeslot.is_available == True %}
-        رزرو نشده
-    {% endif %}
-    </p>
-    <p>
+                <div class="gym-main-content">
+                    
+                    <div class="gallery">
+                        <img src="{{ images.0.image.url }}" alt="{{ gym.name }}" class="gallery-main-image" id="main-gym-image">
+                        
+                        <div class="gallery-thumbnails">
+                            {% for image in images %}
+                                <img src="{{ image.image.url }}" alt="تصویر {{ forloop.counter }}" 
+                                     class="thumbnail-img {% if forloop.first %}active{% endif %}">
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="gym-info">
+                        <h1 class="gym-title">{{ gym.name }}</h1>
+                        <p class="gym-description">
+                            {{ gym.description|linebreaks }}
+                        </p>
+                    </div>
+                </div>
 
-    {{ timeslot.date }}
-    </p>
-    <p>
+                <div class="gym-sidebar">
+                    
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-header">اطلاعات مجموعه</h3>
+                        <div class="sidebar-content">
+                            <ul class="info-list">
+                                <li>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ gym.address }}</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>قیمت: {{ gym.price }} تومان</span>
+                                </li>
+                                </ul>
+                        </div>
+                    </div>
 
-    </p>
-<p>
-    <a href="{% url 'fit:reserve_time' timeslot.id gym.id %}">همین الان رزرو کن</a>
-</p>
-{% endfor %}
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-header">انتخاب سانس</h3>
+                        <div class="sidebar-content">
+                            
+                            {% regroup timeslots by date as timeslots_by_date %}
+                            
+                            {% for group in timeslots_by_date %}
+                                <div class="timeslot-group">
+                                    <h4 class="timeslot-date">
+                                        {{ group.list.0.get_day_of_week_display }} - {{ group.grouper }}
+                                    </h4>
+                                    
+                                    <div class="timeslot-grid">
+                                        {% for timeslot in group.list %}
+                                            
+                                            {% if timeslot.is_available %}
+                                                <a href="{% url 'fit:reserve_time' timeslot.id gym.id %}" 
+                                                   class="time-chip available">
+                                                    {{ timeslot.start_time|time:"H:i" }} - {{ timeslot.end_time|time:"H:i" }}
+                                                </a>
+                                            {% else %}
+                                                <span class="time-chip booked">
+                                                    {{ timeslot.start_time|time:"H:i" }} - {{ timeslot.end_time|time:"H:i" }}
+                                                </span>
+                                            {% endif %}
+                                            
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p>سانس خالی برای این مجموعه یافت نشد.</p>
+                            {% endfor %}
+                            
+                        </div>
+                    </div>
+
+                </div> </div> </div> </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>© 1403 | سیستم رزرواسیون ورزشی. کلیه حقوق محفوظ است.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // --- Simple Image Gallery Logic ---
+            const mainImage = document.getElementById('main-gym-image');
+            const thumbnails = document.querySelectorAll('.thumbnail-img');
+            
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', function() {
+                    // Change main image src
+                    mainImage.src = this.src;
+                    
+                    // Update active class
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+        });
+    </script>
+
 </body>
 </html>

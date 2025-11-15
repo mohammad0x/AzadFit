@@ -23,8 +23,6 @@ def login_phone(request):
     if request.method == 'POST':
         global phone, random_code
         phone = request.POST.get('phone')
-        if MyUser.objects.filter(phone=phone).exists():
-            return redirect('app:register')
         random_code = random.randint(10000, 99999)
         print(random_code)
         # sms = KavenegarAPI(
@@ -106,7 +104,7 @@ def gym_detail(request, slug):
 #     return render(request, 'timeslots/timeslot_list.html', {'timeslots': timeslots})
 
 
-@login_required
+@login_required(login_url="/login/")
 def reserve_time(request, timeslot_id, gym_id):
     timeslot = get_object_or_404(TimeSlot, id=timeslot_id)
     gym = get_object_or_404(Gym, id=gym_id)
@@ -117,7 +115,7 @@ def reserve_time(request, timeslot_id, gym_id):
 
     if Reservation.objects.filter(user=request.user, time_slot=timeslot).exists():
         messages.error(request, "قبلا رزرو شده")
-        return redirect('fit:gym_list')
+        return redirect('fit:user_reservations')
 
     Reservation.objects.create(
         time_slot=timeslot,
@@ -132,7 +130,7 @@ def reserve_time(request, timeslot_id, gym_id):
     return redirect('fit:user_reservations')
 
 
-@login_required
+@login_required(login_url="/login/")
 def user_reservations(request):
     global pricee
     pricee = 0
@@ -142,7 +140,7 @@ def user_reservations(request):
             pricee += int(reservation.gym.price)
     return render(request, 'reservations/user_reservations.html', {'reservations': reservations , 'price':pricee})
 
-@login_required
+@login_required(login_url="/login/")
 def history(request):
     reservations = Reservation.objects.filter(user=request.user, is_pey=True)
     return render(request , 'history/history.html' , {'reservations':reservations})
@@ -152,7 +150,8 @@ def reservDelete(request , id):
     Reservation.objects.filter(user = request.user , id = id).delete()
     return redirect('fit:user_reservations')
 
-@login_required
+
+@login_required(login_url="/login/")
 def request_payment(request):
     if request.method == 'POST':
         global amount
@@ -191,7 +190,7 @@ def request_payment(request):
     return redirect('fit:user_reservations')
 
 
-@login_required
+@login_required(login_url="/login/")
 def verify(request):
     status = request.GET.get('Status')
     authority = request.GET['Authority']

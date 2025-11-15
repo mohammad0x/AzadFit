@@ -1,24 +1,292 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رزروهای من | سیستم رزرواسیون</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- Global Reset & Body --- */
+        :root {
+            --primary-color: #3182ce;
+            --primary-hover: #2b6cb0;
+            --light-gray: #f0f4f8;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--light-gray);
+            direction: rtl;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        
+        main {
+            flex-grow: 1;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px; /* Max width for a list view */
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* ============================ */
+        /* HEADER & FOOTER (Copied) */
+        /* ============================ */
+        .main-header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            width: 100%;
+        }
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0; padding-bottom: 0;
+            max-width: 1200px; /* Header container is full-width */
+        }
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .main-nav ul { list-style: none; display: flex; gap: 2rem; }
+        .main-nav a { text-decoration: none; color: #4a5568; font-weight: 600; font-size: 0.95rem; transition: color 0.3s ease; }
+        .main-nav a:hover, .main-nav a.active { color: var(--primary-color); }
+        
+        .main-footer {
+            background-color: var(--text-dark);
+            color: #e2e8f0;
+            padding: 2rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+        .main-footer .container { padding-top: 0; padding-bottom: 0; }
+
+        /* ============================ */
+        /* CONTENT STYLES          */
+        /* ============================ */
+        
+        /* Page Hero Banner */
+        .page-hero {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2.5rem auto; /* Vertical margin */
+            text-align: center;
+        }
+        
+        .page-hero h1 {
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-hero p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* --- Reservation List --- */
+        .reservation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding-bottom: 3rem; /* Space before footer */
+        }
+
+        /* --- Reservation Card Styling --- */
+        .reservation-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+            overflow: hidden; /* To keep radius */
+            display: flex;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .reservation-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
+        }
+
+        /* Part 1: Date & Time Box */
+        .reservation-card-datetime {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 170px; /* Fixed width */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .reservation-card-datetime .day {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .reservation-card-datetime .date {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 0.75rem;
+        }
+        
+        .reservation-card-datetime .time {
+            font-size: 1rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 6px;
+            direction: ltr; /* Time is LTR */
+        }
+        
+        /* Part 2: Gym Details */
+        .reservation-card-details {
+            padding: 1.5rem 2rem;
+            flex-grow: 1; /* Takes remaining space */
+        }
+
+        .reservation-card-details h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .reservation-card-details .detail-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .reservation-card-details .detail-item i {
+            width: 20px;
+            margin-left: 0.75rem; /* Space between icon and text */
+            font-size: 1.1rem;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .reservation-card-details .detail-item span {
+            color: var(--text-dark); /* Darker text for the info */
+        }
+        
+        /* --- Empty State --- */
+        .empty-state {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            border: 2px dashed var(--border-color);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 600px) {
+            .reservation-card {
+                flex-direction: column; /* Stack vertically */
+            }
+            .reservation-card-datetime {
+                min-width: 100%;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .reservation-card-details {
+                padding: 1.5rem;
+            }
+            .page-hero {
+                padding: 1.5rem;
+            }
+        }
+
+    </style>
 </head>
 <body>
-{% for reservations in reservations %}
-    <p>  {{ reservations.time_slot.get_day_of_week_display }} |
-    </p>
-    <p>
-     start   {{ reservations.time_slot.start_time }} |
-     end   {{ reservations.time_slot.end_time }}
-</p>
-        <p>
-        {{ reservations.gym.name }} |
-        {{ reservations.gym.address }} |
-        {{ reservations.gym.price }}
 
-    </p>
+{% include 'header/header.html' %}
 
-{% endfor %}
+    <main>
+        <div class="container">
+            
+            <div class="page-hero">
+                <h1>رزروهای من</h1>
+                <p>لیست سانس‌هایی که تاکنون رزرو کرده‌اید.</p>
+            </div>
+            
+            <div class="reservation-list">
+                
+                {% for reservations in reservations %}
+                
+                <div class="reservation-card">
+                    
+                    <div class="reservation-card-datetime">
+                        <span class="day">{{ reservations.time_slot.get_day_of_week_display }}</span>
+                        <span class="date">{{ reservations.time_slot.date }}</span>
+                        <span class="time">
+                            {{ reservations.time_slot.start_time|time:"H:i" }} - {{ reservations.time_slot.end_time|time:"H:i" }}
+                        </span>
+                    </div>
+                    
+                    <div class="reservation-card-details">
+                        <h2>{{ reservations.gym.name }}</h2>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ reservations.gym.address }}</span>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>{{ reservations.gym.price }} تومان</span>
+                        </div>
+                    </div>
+                    
+                </div> {% empty %}
+                
+                <div class="empty-state">
+                    <p>شما هنوز هیچ سانسی رزرو نکرده‌اید.</p>
+                </div>
+                
+                {% endfor %}
+                
+            </div> </div> </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>© 1403 | سیستم رزرواسیون ورزشی. کلیه حقوق محفوظ است.</p>
+        </div>
+    </footer>
+
 </body>
 </html>

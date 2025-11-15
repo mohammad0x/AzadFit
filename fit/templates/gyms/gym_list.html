@@ -1,17 +1,235 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجموعه‌های ورزشی | سیستم رزرواسیون</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- Global Reset & Body --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f4f8; /* Clean background */
+            direction: rtl;
+            color: #333;
+            line-height: 1.6;
+            
+            /* == Pro Layout Trick: Footer Push == */
+            /* This ensures the footer sticks to the bottom */
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        /* == Pro Layout Trick: Footer Push == */
+        /* This <main> tag will grow to fill all available space */
+        main {
+            flex-grow: 1;
+        }
+        
+        /* --- Main Container --- */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem; /* Padding only left/right */
+        }
+        
+        /* ============================ */
+        /* HEADER STYLES        */
+        /* ============================ */
+      
+
+        /* ============================ */
+        /* CONTENT STYLES          */
+        /* ============================ */
+        
+        /* NEW "Graphical" Hero Banner */
+        .page-hero {
+            background-color: #3182ce;
+            color: #ffffff;
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            margin: 2.5rem auto; /* Vertical margin */
+            text-align: center;
+        }
+        
+        .page-hero h1 {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-hero p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* --- Gym Grid (Card Layout) --- */
+        .gym-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.75rem; /* Space between cards */
+            padding-bottom: 3rem; /* Space before footer */
+        }
+
+        /* --- Gym Card Styling --- */
+        .gym-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gym-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* === IMPORTANT: IMAGE PLACEHOLDER === */
+        /* Replace this with your <img> tag */
+        .gym-card-image-placeholder {
+            height: 200px;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+        }
+        
+        .gym-card-image-placeholder i {
+            font-size: 3rem;
+        }
+        
+        /* Use this class for your real image */
+        .gym-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* This makes the image cover the area nicely */
+        }
+
+        .gym-card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .gym-card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .spacer {
+            flex-grow: 1; 
+            min-height: 1rem;
+        }
+
+        .gym-card-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            font-family: 'Vazirmatn', sans-serif;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            color: #ffffff;
+            background-color: #3182ce;
+            transition: background-color 0.3s ease;
+        }
+
+        .gym-card-link:hover {
+            background-color: #2b6cb0;
+        }
+        
+        .gym-card-link i {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .gym-card-link:hover i {
+             transform: translateX(-3px);
+        }
+        
+        /* ============================ */
+        /* FOOTER STYLES        */
+        /* ============================ */
+        .main-footer {
+            background-color: #2d3748; /* Dark background */
+            color: #e2e8f0;
+            padding: 2rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: auto; /* Part of the "footer push" */
+        }
+
+    </style>
 </head>
 <body>
-{% for gyms in gyms %}
-    <p>
-        {{ gyms.name }}
-    </p>
-    <p>
-        <a href="{% url 'fit:gym_detail' gyms.slug %}">بررسی</a>
-    </p>
-{% endfor %}
+
+{% include 'header/header.html' %}
+    <main>
+        <div class="container">
+            <div class="page-hero">
+                <h1>مجموعه‌های ورزشی</h1>
+                <p>بهترین مجموعه‌های ورزشی شهر را پیدا و رزرو کنید.</p>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="gym-grid">
+                
+                {% for gyms in gyms %}
+                
+                <div class="gym-card">
+                    
+                    <div class="gym-card-image-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    
+                    <div class="gym-card-content">
+                        <h3 class="gym-card-title">{{ gyms.name }}</h3>
+                        
+                        <div class="spacer"></div>
+                        
+                        <a href="{% url 'fit:gym_detail' gyms.slug %}" class="gym-card-link">
+                            <span>مشاهده و رزرو</span>
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                {% endfor %}
+                </div> </div> </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>© 1403 | سیستم رزرواسیون ورزشی. کلیه حقوق محفوظ است.</p>
+        </div>
+    </footer>
+
 </body>
 </html>

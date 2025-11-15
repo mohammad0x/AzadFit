@@ -1,25 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود | سیستم رزرواسیون ورزشی</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- Global Reset & Body --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f4f8; /* A light, clean background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: rtl;
+            color: #333;
+        }
+
+        /* --- Login Container (The Card) --- */
+        .login-container {
+            background-color: #ffffff;
+            padding: 2.5rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            margin: 1rem;
+        }
+
+        .login-container h2 {
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: #1a202c;
+        }
+
+        .login-container .info-text {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: right; /* Labels will be right-aligned */
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        /* --- Input Wrapper (for Icon) --- */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            padding-left: 45px; /* Space for the icon on the left */
+            font-size: 1rem;
+            font-family: 'Vazirmatn', sans-serif;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+
+            /* IMPORTANT: For phone numbers, use LTR direction */
+            direction: ltr;
+            text-align: left;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 15px; /* Icon on the left */
+            transform: translateY(-50%);
+            color: #a0aec0;
+            transition: color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3182ce; /* A nice blue */
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+        }
+
+        .form-input:focus + .input-icon {
+            color: #3182ce;
+        }
+
+        /* --- Submit Button --- */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Vazirmatn', sans-serif;
+            color: #ffffff;
+            background-color: #3182ce; /* Primary blue */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            /* For aligning icon and text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; /* Space between icon and text */
+        }
+
+        .submit-btn:hover {
+            background-color: #2b6cb0; /* Darker blue on hover */
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-container h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+    </style>
 </head>
 <body>
-<form method="post">
+
+    <div class="login-container">
+        <h2>ورود یا ثبت نام</h2>
+        <p class="info-text">برای ورود یا ثبت‌نام، شماره تلفن همراه خود را وارد کنید.</p>
+
+        <form method="post">
             {% csrf_token %}
+
             <div class="form-group">
                <label for="phone">شماره تلفن همراه</label>
                <div class="input-wrapper">
-                  <input type="tel" name="phone" id="phone" class="form-input" placeholder="0912 345 6789" pattern="09\d{9}" required>
+                  <input type="tel" name="phone" id="phone" class="form-input" placeholder="0912 345 6789" pattern="09[0-9]{9}" required>
                   <i class="fas fa-phone input-icon"></i>
                </div>
             </div>
 
-            <input type="submit" value="دریافت کد" class="submit-btn">
-               دریافت کد تأیید
-               <i class="fas fa-paper-plane"></i>
+            <button type="submit" class="submit-btn">
+                <span>دریافت کد تأیید</span>
+                <i class="fas fa-paper-plane"></i>
             </button>
-</form>
+        </form>
+    </div>
 
 </body>
 </html>

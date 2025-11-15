@@ -1,45 +1,314 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأیید کد | سیستم رزرواسیون</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        /* --- Global Reset & Body --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f4f8; /* Same background as login */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: rtl;
+            color: #333;
+        }
+
+        /* --- OTP Card --- */
+        .otp-card {
+            background-color: #ffffff;
+            padding: 2.5rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 480px; /* Slightly wider for OTP codes */
+            text-align: center;
+            margin: 1rem;
+        }
+
+        .otp-header {
+            margin-bottom: 2rem;
+        }
+
+        .otp-header h2 {
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: #1a202c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .otp-header p {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .otp-header p strong {
+            color: #2d3748;
+            font-weight: 700;
+            /* This number should be LTR */
+            direction: ltr;
+            display: inline-block;
+        }
+
+        /* --- OTP Code Inputs --- */
+        .code-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            /* Inputs are numbers, so they should be LTR */
+            direction: ltr;
+        }
+
+        .code-input {
+            width: 50px;
+            height: 60px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: 'Vazirmatn', sans-serif;
+            text-align: center;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            /* For mobile keyboards */
+            inputmode: numeric;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+        }
+
+        /* Hide the browser's default spinners for number inputs */
+        .code-input::-webkit-outer-spin-button,
+        .code-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* --- Submit Button --- */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Vazirmatn', sans-serif;
+            color: #ffffff;
+            background-color: #3182ce;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #2b6cb0;
+        }
+
+        /* --- Countdown & Resend --- */
+        .resend-container {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        #resend-link {
+            color: #3182ce;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+        }
+
+        /* When link is shown, hide the timer */
+        #resend-link.active {
+            display: inline;
+        }
+
+        #countdown.hidden {
+            display: none;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 500px) {
+            .otp-card {
+                padding: 2rem 1.5rem;
+            }
+            .code-inputs {
+                gap: 5px;
+            }
+            .code-input {
+                width: 45px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+        }
+
+    </style>
 </head>
 <body>
- <div class="verify-container">
-        <div class="verify-bg"></div>
 
-        <div class="verify-card animate__animated animate__fadeInUp">
-            <div class="verify-header">
-                <h2><i class="fas fa-shield-alt"></i> تأیید هویت</h2>
-                <p>کد ۶ رقمی ارسال شده به شماره  را وارد کنید</p>
+    <div class="otp-card animate__animated animate__fadeInUp">
+
+        <div class="otp-header">
+            <h2><i class="fas fa-shield-alt"></i> تأیید هویت</h2>
+            <p>کد 5 رقمی ارسال شده به شماره <strong>0912***6789</strong> را وارد کنید.</p>
+        </div>
+
+        <form method="post" id="otp-form">
+            {% csrf_token %}
+
+            <div class="code-inputs">
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" class="code-input" pattern="[0-9]" inputmode="numeric" required>
             </div>
 
-            <form method="post">
-                {% csrf_token %}
-{#                <div class="code-inputs">#}
-{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
-{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
-{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
-{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
-{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
-{#                    <input type="text" maxlength="1" class="code-input" pattern="[0-9]">#}
-{#                </div>#}
-                <div>
+            <input type="hidden" name="verify_code" id="full_code">
 
-                </div>
-                <input type="text" name="verify_code" id="full_code">
+            <button type="submit" class="submit-btn">
+                <span>تأیید نهایی</span>
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </form>
 
-                <input type="submit" class="verify-btn">
-                    تأیید نهایی
-                    <i class="fas fa-check-circle"></i>
-{#                </input>#}
-            </form>
-
-            <div class="countdown" id="countdown">
-                ارسال مجدد کد پس از ۱:۵۹
-            </div>
+        <div class="resend-container">
+            <span id="countdown">ارسال مجدد کد تا ۰۱:۵۹ دیگر</span>
+            <a href="#" id="resend-link">ارسال مجدد کد</a>
         </div>
     </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const inputs = document.querySelectorAll('.code-input');
+            const hiddenInput = document.getElementById('full_code');
+            const form = document.getElementById('otp-form');
+
+            // --- 1. OTP Input Handling (Focus, Paste, Backspace) ---
+
+            inputs.forEach((input, index) => {
+
+                input.addEventListener('input', (e) => {
+                    // Combine all inputs into the hidden field
+                    updateHiddenInput();
+
+                    // Move to next input if current one is filled
+                    if (e.target.value && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    // Move to previous input on backspace if current is empty
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pasteData = e.clipboardData.getData('text').trim().slice(0, inputs.length);
+
+                    if (/^\d+$/.test(pasteData)) { // Only paste if it's numbers
+                        pasteData.split('').forEach((char, i) => {
+                            if (inputs[i]) {
+                                inputs[i].value = char;
+                            }
+                        });
+                        updateHiddenInput();
+
+                        // Focus the last pasted input or the next empty one
+                        const lastFilled = Math.min(pasteData.length - 1, inputs.length - 1);
+                        if (lastFilled < inputs.length - 1) {
+                            inputs[lastFilled + 1].focus();
+                        } else {
+                            inputs[lastFilled].focus();
+                        }
+                    }
+                });
+            });
+
+            function updateHiddenInput() {
+                let combinedValue = '';
+                inputs.forEach(input => {
+                    combinedValue += input.value;
+                });
+                hiddenInput.value = combinedValue;
+            }
+
+            // --- 2. Countdown Timer Logic ---
+
+            const countdownEl = document.getElementById('countdown');
+            const resendLink = document.getElementById('resend-link');
+            let timeLeft = 119; // 1 minute 59 seconds
+
+            function startTimer() {
+                // Reset UI
+                countdownEl.classList.remove('hidden');
+                resendLink.classList.remove('active');
+
+                const timerInterval = setInterval(() => {
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        countdownEl.classList.add('hidden');
+                        resendLink.classList.add('active');
+                    } else {
+                        const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                        const seconds = (timeLeft % 60).toString().padStart(2, '0');
+                        countdownEl.textContent = `ارسال مجدد کد تا ${minutes}:${seconds} دیگر`;
+                        timeLeft--;
+                    }
+                }, 1000);
+            }
+
+            // Handle resend click
+            resendLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                // TODO: Add your logic to call the resend-code URL (e.g., using fetch)
+                console.log('Resend code requested...');
+
+                // Restart timer
+                timeLeft = 119;
+                startTimer();
+            });
+
+            // Start the timer on page load
+            startTimer();
+        });
+    </script>
 
 </body>
 </html>
